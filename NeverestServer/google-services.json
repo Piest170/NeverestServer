@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "698331879070",
+    "firebase_url": "https://neverest-64c2b-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "neverest-64c2b",
+    "storage_bucket": "neverest-64c2b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698331879070:android:9dd5aa575894e8b7290d8f",
+        "android_client_info": {
+          "package_name": "com.Company.Neverest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698331879070-5io4u6v8bh61npkdic21p742j7laaatf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYbmh1fOSSH-FGSbarSg5cuBJBSX-eDgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698331879070-5io4u6v8bh61npkdic21p742j7laaatf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
