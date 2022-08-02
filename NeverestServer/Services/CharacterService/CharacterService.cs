@@ -94,6 +94,7 @@ namespace NeverestServer.Services.CharacterSevice
                         response.Message = "Character Not Found.";
                         return response;
                     }
+                    //test
 
                     var skill = await _context.Skills.FirstOrDefaultAsync(s => s.SkillId == newCharacterSkill.SkillId);
                     if (skill == null)
