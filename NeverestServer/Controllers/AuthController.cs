@@ -6,7 +6,7 @@ using NeverestServer.Services.Auth;
 
 namespace NeverestServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]/user")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -21,7 +21,8 @@ namespace NeverestServer.Controllers
         public async Task<ActionResult<ServiceResponse<int>>> Register(UserRegisterDto request)
         {
             var response = await _auth.Register(
-                new User { Username = request.UserName }, request.Password
+                new User { Username = request.Username, Email = request.Email
+                }, request.Password
             );
             if (!response.Success)
             {
@@ -33,7 +34,40 @@ namespace NeverestServer.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ServiceResponse<string>>> Login(UserLoginDto request)
         {
-            var response = await _auth.Login(request.UserName, request.Password);
+            var response = await _auth.Login(request.Username, request.Password);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPost("verify")]
+        public async Task<ActionResult<ServiceResponse<string>>> Verify(string token)
+        {
+            var response = await _auth.Verify(token);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<ServiceResponse<string>>> ForgotPassword(string email)
+        {
+            var response = await _auth.ForgotPassword(email);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<ServiceResponse<string>>> ResetPassword(UserResetDto reset)
+        {
+            var response = await _auth.ResetPassword(reset);
             if (!response.Success)
             {
                 return BadRequest(response);

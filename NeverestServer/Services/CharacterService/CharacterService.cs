@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using NeverestServer.Data.Dtos.Character;
+﻿using NeverestServer.Data.Dtos.Character;
 using NeverestServer.Models;
 using NeverestServer.Services.CharacterService;
 using System.Security.Claims;
@@ -10,11 +9,9 @@ namespace NeverestServer.Services.CharacterSevice
     {
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        //private readonly IMapper _mapper;
 
-        public CharacterService(/*IMapper mapper,*/ DataContext context, IHttpContextAccessor httpContextAccessor)
+        public CharacterService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
-            //_mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -26,13 +23,8 @@ namespace NeverestServer.Services.CharacterSevice
         {
             var response = new ServiceResponse<List<GetCharacterDto>>();
             var db = await _context.Characters
-                .Include(c => c.User)
-                .Include(c => c.Advisor)
-                //.Include(c => c.Skills)
-                .Include(c => c.Job)
-                .Where(c => c.User.UserId == GetUserId())
+                .Where(c => c.User.Id == GetUserId())
                 .ToListAsync();
-            //response.Data = db.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
             return response;
         }
 
@@ -40,42 +32,8 @@ namespace NeverestServer.Services.CharacterSevice
         {
             var response = new ServiceResponse<GetCharacterDto>();
             var db = await _context.Characters
-                .Include(c => c.User)
-                .Include(c => c.Advisor)
-                //.Include(c => c.Skills)
-                .Include(c => c.Job)
-                .FirstOrDefaultAsync(c => c.CharacterId == id && c.User.UserId == GetUserId());
+                .FirstOrDefaultAsync(c => c.CharacterId == id && c.User.Id == GetUserId());
             return response;
-        }
-
-        public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
-        {
-            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-            try
-            {
-                //Character character = _mapper.Map<Character>(newCharacter);
-                //character.User = await _context.Users.FirstOrDefaultAsync(u => u.UserId == GetUserId());
-                //if (character == null)
-                //{
-                //    _context.Characters.Add(character);
-                //    await _context.SaveChangesAsync();
-                //    serviceResponse.Data = await _context.Characters
-                //        .Where(c => c.User.UserId == GetUserId())
-                //        .Select(c => _mapper.Map<GetCharacterDto>(c))
-                //        .ToListAsync();
-                //}
-                //else
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Character has Already Created.";
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
-            return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(List<AddCharacterSkillDto> newCharacterSkills)
@@ -86,7 +44,6 @@ namespace NeverestServer.Services.CharacterSevice
                 foreach (var newCharacterSkill in newCharacterSkills)
                 {
                     var character = await _context.Characters
-                        //.Include(c => c.Skills)
                         .FirstOrDefaultAsync(c => c.CharacterId == newCharacterSkill.CharacterId);
                     if (character == null)
                     {
@@ -94,15 +51,14 @@ namespace NeverestServer.Services.CharacterSevice
                         response.Message = "Character Not Found.";
                         return response;
                     }
-                    //test
 
                     var skill = await _context.Skills.FirstOrDefaultAsync(s => s.SkillId == newCharacterSkill.SkillId);
                     if (skill == null)
                     {
                         response.Success = false;
                         response.Message = "Skill Not Found.";
+                        return response;
                     }
-
                     var characterSkill = new CharacterSkill()
                     {
                         CharacterId = newCharacterSkill.CharacterId,
@@ -111,15 +67,15 @@ namespace NeverestServer.Services.CharacterSevice
                         LearningStatus = "Learning"
                     };
 
-
                     await _context.CharacterSkills.AddAsync(characterSkill);
                 }
 
                 await _context.SaveChangesAsync();
             }
-            catch
+            catch (Exception ex)
             {
-
+                response.Success = false;
+                response.Message = ex.Message;
             }
             return response;
         }
@@ -130,8 +86,7 @@ namespace NeverestServer.Services.CharacterSevice
             try
             {
                 var character = await _context.Characters
-                    //.Include(c => c.Quests)
-                    .FirstOrDefaultAsync(c => c.CharacterId == newCharacterQuest.CharacterId && c.User.UserId == GetUserId());
+                    .FirstOrDefaultAsync(c => c.CharacterId == newCharacterQuest.CharacterId && c.User.Id == GetUserId());
                 if (character == null)
                 {
                     response.Success = false;
@@ -144,11 +99,13 @@ namespace NeverestServer.Services.CharacterSevice
                 {
                     response.Success = false;
                     response.Message = "Quest Not Found.";
+                    return response;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                response.Success = false;
+                response.Message = ex.Message;
             }
             return response;
         }
@@ -160,22 +117,14 @@ namespace NeverestServer.Services.CharacterSevice
             try
             {
                 var character = await _context.Characters
-                    .Include(c => c.User)
                     .FirstOrDefaultAsync(c => c.CharacterId == updateCharacter.CharacterId);
-                if (character.User.UserId == GetUserId())
+                if (character.User.Id == GetUserId())
                 {
-                    var job = await _context.Jobs
-                        .Include(j => j.Skills)
-                        .FirstOrDefaultAsync(j => j.JobId == updateCharacter.JobId);
-                    if (job.JobId == 1)
+                    if (character.Job.JobId == 1 && character.CharacterSkills.Count >= 3)
                     {
-
+                        character.Job.JobId+=1;
                     }
-                    character.CharacterName = updateCharacter.CharacterName;
-
                     await _context.SaveChangesAsync();
-
-                    //response.Data = _mapper.Map<GetCharacterDto>(character);
                 }
                 else
                 {
@@ -188,7 +137,6 @@ namespace NeverestServer.Services.CharacterSevice
                 response.Success = false;
                 response.Message = ex.Message;
             }
-
             return response;
         }
     }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NeverestServer.Migrations
 {
-    public partial class testData : Migration
+    public partial class TestData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,21 +40,6 @@ namespace NeverestServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Skills",
                 columns: table => new
                 {
@@ -62,18 +47,57 @@ namespace NeverestServer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SkillName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SkillGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SkillLevel = table.Column<int>(type: "int", nullable: false),
-                    MaxSkillLevel = table.Column<int>(type: "int", nullable: false),
-                    JobId = table.Column<int>(type: "int", nullable: true)
+                    MaxSkillLevel = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Skills", x => x.SkillId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VerifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenExpired = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobSkills",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    SkillId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobSkills", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Skills_Jobs_JobId",
+                        name: "FK_JobSkills_Jobs_JobId",
                         column: x => x.JobId,
                         principalTable: "Jobs",
-                        principalColumn: "JobId");
+                        principalColumn: "JobId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JobSkills_Skills_SkillId",
+                        column: x => x.SkillId,
+                        principalTable: "Skills",
+                        principalColumn: "SkillId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,7 +117,7 @@ namespace NeverestServer.Migrations
                         name: "FK_Advisors_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -103,31 +127,54 @@ namespace NeverestServer.Migrations
                 {
                     CharacterId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CharacterName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    AdvisorId = table.Column<int>(type: "int", nullable: false),
-                    JobId = table.Column<int>(type: "int", nullable: true),
-                    DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    CharacterSkillsId = table.Column<int>(type: "int", nullable: false),
+                    CharacterQuestsId = table.Column<int>(type: "int", nullable: false),
+                    DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Characters", x => x.CharacterId);
                     table.ForeignKey(
-                        name: "FK_Characters_Advisors_AdvisorId",
-                        column: x => x.AdvisorId,
-                        principalTable: "Advisors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Characters_Jobs_JobId",
                         column: x => x.JobId,
                         principalTable: "Jobs",
-                        principalColumn: "JobId");
+                        principalColumn: "JobId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Characters_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CharacterQuests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CharacterId = table.Column<int>(type: "int", nullable: false),
+                    QuestId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CharacterQuests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CharacterQuests_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "CharacterId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CharacterQuests_Quests_QuestId",
+                        column: x => x.QuestId,
+                        principalTable: "Quests",
+                        principalColumn: "QuestId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,41 +220,47 @@ namespace NeverestServer.Migrations
 
             migrationBuilder.InsertData(
                 table: "Skills",
-                columns: new[] { "SkillId", "JobId", "MaxSkillLevel", "SkillGroup", "SkillLevel", "SkillName" },
+                columns: new[] { "SkillId", "MaxSkillLevel", "SkillGroup", "SkillName" },
                 values: new object[,]
                 {
-                    { 1, null, 2, "Frontend", 0, "HTML" },
-                    { 2, null, 1, "Frontend", 0, "CSS" },
-                    { 3, null, 2, "Frontend", 0, "JavaScript" },
-                    { 4, null, 2, "Frontend", 0, "TypeScript" },
-                    { 5, null, 3, "Frontend", 0, "Angular" },
-                    { 6, null, 2, "Backend", 0, "C#" },
-                    { 7, null, 3, "Backend", 0, "Asp.Net" },
-                    { 8, null, 2, "Backend", 0, "Java" },
-                    { 9, null, 2, "Backend", 0, "Python" }
+                    { 1, 2, "Frontend", "HTML" },
+                    { 2, 1, "Frontend", "CSS" },
+                    { 3, 2, "Frontend", "JavaScript" },
+                    { 4, 2, "Frontend", "TypeScript" },
+                    { 5, 3, "Frontend", "Angular" },
+                    { 6, 2, "Backend", "C#" },
+                    { 7, 3, "Backend", "Asp.Net" },
+                    { 8, 2, "Backend", "Java" },
+                    { 9, 2, "Backend", "Python" }
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Advisors_UserId",
                 table: "Advisors",
-                column: "UserId");
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Characters_AdvisorId",
-                table: "Characters",
-                column: "AdvisorId");
+                name: "IX_CharacterQuests_CharacterId",
+                table: "CharacterQuests",
+                column: "CharacterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CharacterQuests_QuestId",
+                table: "CharacterQuests",
+                column: "QuestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Characters_JobId",
                 table: "Characters",
-                column: "JobId");
+                column: "JobId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Characters_UserId",
                 table: "Characters",
                 column: "UserId",
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CharacterSkills_CharacterId",
@@ -220,15 +273,29 @@ namespace NeverestServer.Migrations
                 column: "SkillId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Skills_JobId",
-                table: "Skills",
+                name: "IX_JobSkills_JobId",
+                table: "JobSkills",
                 column: "JobId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobSkills_SkillId",
+                table: "JobSkills",
+                column: "SkillId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Advisors");
+
+            migrationBuilder.DropTable(
+                name: "CharacterQuests");
+
+            migrationBuilder.DropTable(
                 name: "CharacterSkills");
+
+            migrationBuilder.DropTable(
+                name: "JobSkills");
 
             migrationBuilder.DropTable(
                 name: "Quests");
@@ -238,9 +305,6 @@ namespace NeverestServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Skills");
-
-            migrationBuilder.DropTable(
-                name: "Advisors");
 
             migrationBuilder.DropTable(
                 name: "Jobs");

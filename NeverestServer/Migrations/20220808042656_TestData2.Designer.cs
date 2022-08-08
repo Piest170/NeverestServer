@@ -12,8 +12,8 @@ using NeverestServer.Data;
 namespace NeverestServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220802041404_testData")]
-    partial class testData
+    [Migration("20220808042656_TestData2")]
+    partial class TestData2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,7 +43,8 @@ namespace NeverestServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Advisors");
                 });
@@ -56,32 +57,55 @@ namespace NeverestServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CharacterId"), 1L, 1);
 
-                    b.Property<int>("AdvisorId")
+                    b.Property<int>("CharacterQuestsId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CharacterName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CharacterSkillsId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("JobId")
+                    b.Property<DateTime>("DataUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("JobId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("CharacterId");
 
-                    b.HasIndex("AdvisorId");
-
                     b.HasIndex("JobId");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Characters");
+                });
+
+            modelBuilder.Entity("NeverestServer.Models.CharacterQuest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("QuestId");
+
+                    b.ToTable("CharacterQuests");
                 });
 
             modelBuilder.Entity("NeverestServer.Models.CharacterSkill", b =>
@@ -170,6 +194,29 @@ namespace NeverestServer.Migrations
                         });
                 });
 
+            modelBuilder.Entity("NeverestServer.Models.JobSkill", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("JobSkills");
+                });
+
             modelBuilder.Entity("NeverestServer.Models.Quest", b =>
                 {
                     b.Property<int>("QuestId")
@@ -203,24 +250,16 @@ namespace NeverestServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"), 1L, 1);
 
-                    b.Property<int?>("JobId")
-                        .HasColumnType("int");
-
                     b.Property<int>("MaxSkillLevel")
                         .HasColumnType("int");
 
                     b.Property<string>("SkillGroup")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SkillLevel")
-                        .HasColumnType("int");
-
                     b.Property<string>("SkillName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SkillId");
-
-                    b.HasIndex("JobId");
 
                     b.ToTable("Skills");
 
@@ -230,7 +269,6 @@ namespace NeverestServer.Migrations
                             SkillId = 1,
                             MaxSkillLevel = 2,
                             SkillGroup = "Frontend",
-                            SkillLevel = 0,
                             SkillName = "HTML"
                         },
                         new
@@ -238,7 +276,6 @@ namespace NeverestServer.Migrations
                             SkillId = 2,
                             MaxSkillLevel = 1,
                             SkillGroup = "Frontend",
-                            SkillLevel = 0,
                             SkillName = "CSS"
                         },
                         new
@@ -246,7 +283,6 @@ namespace NeverestServer.Migrations
                             SkillId = 3,
                             MaxSkillLevel = 2,
                             SkillGroup = "Frontend",
-                            SkillLevel = 0,
                             SkillName = "JavaScript"
                         },
                         new
@@ -254,7 +290,6 @@ namespace NeverestServer.Migrations
                             SkillId = 4,
                             MaxSkillLevel = 2,
                             SkillGroup = "Frontend",
-                            SkillLevel = 0,
                             SkillName = "TypeScript"
                         },
                         new
@@ -262,7 +297,6 @@ namespace NeverestServer.Migrations
                             SkillId = 5,
                             MaxSkillLevel = 3,
                             SkillGroup = "Frontend",
-                            SkillLevel = 0,
                             SkillName = "Angular"
                         },
                         new
@@ -270,7 +304,6 @@ namespace NeverestServer.Migrations
                             SkillId = 6,
                             MaxSkillLevel = 2,
                             SkillGroup = "Backend",
-                            SkillLevel = 0,
                             SkillName = "C#"
                         },
                         new
@@ -278,7 +311,6 @@ namespace NeverestServer.Migrations
                             SkillId = 7,
                             MaxSkillLevel = 3,
                             SkillGroup = "Backend",
-                            SkillLevel = 0,
                             SkillName = "Asp.Net"
                         },
                         new
@@ -286,7 +318,6 @@ namespace NeverestServer.Migrations
                             SkillId = 8,
                             MaxSkillLevel = 2,
                             SkillGroup = "Backend",
-                            SkillLevel = 0,
                             SkillName = "Java"
                         },
                         new
@@ -294,18 +325,21 @@ namespace NeverestServer.Migrations
                             SkillId = 9,
                             MaxSkillLevel = 2,
                             SkillGroup = "Backend",
-                            SkillLevel = 0,
                             SkillName = "Python"
                         });
                 });
 
             modelBuilder.Entity("NeverestServer.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
@@ -315,10 +349,23 @@ namespace NeverestServer.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("ResetPasswordToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });
@@ -326,8 +373,8 @@ namespace NeverestServer.Migrations
             modelBuilder.Entity("NeverestServer.Models.Advisor", b =>
                 {
                     b.HasOne("NeverestServer.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne("Advisor")
+                        .HasForeignKey("NeverestServer.Models.Advisor", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -336,26 +383,40 @@ namespace NeverestServer.Migrations
 
             modelBuilder.Entity("NeverestServer.Models.Character", b =>
                 {
-                    b.HasOne("NeverestServer.Models.Advisor", "Advisor")
+                    b.HasOne("NeverestServer.Models.Job", "Job")
                         .WithMany("Characters")
-                        .HasForeignKey("AdvisorId")
+                        .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("NeverestServer.Models.Job", "Job")
-                        .WithMany()
-                        .HasForeignKey("JobId");
 
                     b.HasOne("NeverestServer.Models.User", "User")
                         .WithOne("Character")
                         .HasForeignKey("NeverestServer.Models.Character", "UserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Advisor");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Job");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NeverestServer.Models.CharacterQuest", b =>
+                {
+                    b.HasOne("NeverestServer.Models.Character", "Character")
+                        .WithMany("CharacterQuests")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NeverestServer.Models.Quest", "Quest")
+                        .WithMany("CharacterQuests")
+                        .HasForeignKey("QuestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Quest");
                 });
 
             modelBuilder.Entity("NeverestServer.Models.CharacterSkill", b =>
@@ -377,35 +438,55 @@ namespace NeverestServer.Migrations
                     b.Navigation("Skill");
                 });
 
-            modelBuilder.Entity("NeverestServer.Models.Skill", b =>
+            modelBuilder.Entity("NeverestServer.Models.JobSkill", b =>
                 {
-                    b.HasOne("NeverestServer.Models.Job", null)
-                        .WithMany("Skills")
-                        .HasForeignKey("JobId");
-                });
+                    b.HasOne("NeverestServer.Models.Job", "Job")
+                        .WithMany("JobSkills")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("NeverestServer.Models.Advisor", b =>
-                {
-                    b.Navigation("Characters");
+                    b.HasOne("NeverestServer.Models.Skill", "Skill")
+                        .WithMany("JobSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("NeverestServer.Models.Character", b =>
                 {
+                    b.Navigation("CharacterQuests");
+
                     b.Navigation("CharacterSkills");
                 });
 
             modelBuilder.Entity("NeverestServer.Models.Job", b =>
                 {
-                    b.Navigation("Skills");
+                    b.Navigation("Characters");
+
+                    b.Navigation("JobSkills");
+                });
+
+            modelBuilder.Entity("NeverestServer.Models.Quest", b =>
+                {
+                    b.Navigation("CharacterQuests");
                 });
 
             modelBuilder.Entity("NeverestServer.Models.Skill", b =>
                 {
                     b.Navigation("CharacterSkills");
+
+                    b.Navigation("JobSkills");
                 });
 
             modelBuilder.Entity("NeverestServer.Models.User", b =>
                 {
+                    b.Navigation("Advisor");
+
                     b.Navigation("Character");
                 });
 #pragma warning restore 612, 618

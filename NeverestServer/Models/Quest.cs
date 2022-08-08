@@ -9,5 +9,6 @@ namespace NeverestServer.Models
         public string? QuestDescription { get; set; }
         public DateTime QuestRecieved { get; set; }
         public DateTime QuestFinished { get; set; }
+        public List<CharacterQuest> CharacterQuests { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NeverestServer.Data;
 
@@ -11,9 +12,10 @@ using NeverestServer.Data;
 namespace NeverestServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220807215103_TestData")]
+    partial class TestData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,7 +77,8 @@ namespace NeverestServer.Migrations
 
                     b.HasKey("CharacterId");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("JobId")
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -382,8 +385,8 @@ namespace NeverestServer.Migrations
             modelBuilder.Entity("NeverestServer.Models.Character", b =>
                 {
                     b.HasOne("NeverestServer.Models.Job", "Job")
-                        .WithMany("Characters")
-                        .HasForeignKey("JobId")
+                        .WithOne("Character")
+                        .HasForeignKey("NeverestServer.Models.Character", "JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -464,7 +467,7 @@ namespace NeverestServer.Migrations
 
             modelBuilder.Entity("NeverestServer.Models.Job", b =>
                 {
-                    b.Navigation("Characters");
+                    b.Navigation("Character");
 
                     b.Navigation("JobSkills");
                 });

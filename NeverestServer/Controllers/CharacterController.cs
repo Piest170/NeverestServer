@@ -18,6 +18,7 @@ namespace NeverestServer.Controllers
     public class CharacterController : ControllerBase
     {
         private readonly ICharacterService _characterService;
+
         public CharacterController(ICharacterService characterService)
         {
             _characterService = characterService;
@@ -29,18 +30,10 @@ namespace NeverestServer.Controllers
             return Ok(await _characterService.GetAllCharacters());
         }
 
-
-
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> GetCharacter(int id)
         {
             return Ok(await _characterService.GetCharacter(id));
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> AddCharacter(AddCharacterDto newCharacter)
-        {
-            return Ok(await _characterService.AddCharacter(newCharacter));
         }
 
         [HttpPut]
@@ -53,7 +46,6 @@ namespace NeverestServer.Controllers
             }
             return Ok(response);
         }
-
 
         [HttpPost("Skill")]
         public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> AddCharacterSkill(List<AddCharacterSkillDto> newCharacterSkill)

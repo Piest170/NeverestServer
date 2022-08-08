@@ -11,14 +11,40 @@ namespace NeverestServer.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Character> Characters { get; set; }
+        public DbSet<CharacterSkill> CharacterSkills { get; set; }
+        public DbSet<CharacterQuest> CharacterQuests { get; set; }
+        public DbSet<JobSkill> JobSkills { get; set; }
         public DbSet<Advisor> Advisors { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Quest> Quests { get; set; }
-        public DbSet<CharacterSkill> CharacterSkills { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CharacterSkill>().HasOne<Character>(cs => cs.Character)
+                .WithMany(c => c.CharacterSkills)
+                .HasForeignKey(cs => cs.CharacterId);
+            modelBuilder.Entity<CharacterSkill>().HasOne<Skill>(cs => cs.Skill)
+                .WithMany(c => c.CharacterSkills)
+                .HasForeignKey(cs => cs.SkillId);
+            modelBuilder.Entity<CharacterQuest>().HasOne<Character>(cq => cq.Character)
+                .WithMany(c => c.CharacterQuests)
+                .HasForeignKey(cs => cs.CharacterId);
+            modelBuilder.Entity<CharacterQuest>().HasOne<Quest>(cq => cq.Quest)
+                .WithMany(c => c.CharacterQuests)
+                .HasForeignKey(cs => cs.QuestId);
+            modelBuilder.Entity<JobSkill>().HasOne<Job>(js => js.Job)
+                .WithMany(j => j.JobSkills)
+                .HasForeignKey(js => js.JobId);
+            modelBuilder.Entity<JobSkill>().HasOne<Skill>(js => js.Skill)
+                .WithMany(j => j.JobSkills)
+                .HasForeignKey(js => js.SkillId);
+            modelBuilder.Entity<Character>().HasOne<User>(u => u.User)
+                .WithOne(u => u.Character)
+                .HasForeignKey<Character>(c => c.UserId);
+            modelBuilder.Entity<Character>().HasOne<Job>(j => j.Job)
+                .WithMany(j => j.Characters)
+                .HasForeignKey(c => c.JobId);
             modelBuilder.Entity<Job>().HasData(
                 new Job()
                 {
@@ -121,18 +147,6 @@ namespace NeverestServer.Data
                     MaxSkillLevel = 2
                 }
             );
-
-            modelBuilder.Entity<CharacterSkill>().HasOne<Character>(cs => cs.Character)
-                .WithMany(c => c.CharacterSkills)
-                .HasForeignKey(cs => cs.CharacterId);
-
-            modelBuilder.Entity<CharacterSkill>().HasOne<Skill>(cs => cs.Skill)
-                .WithMany(c => c.CharacterSkills)
-                .HasForeignKey(cs => cs.SkillId);
-
-            modelBuilder.Entity<Character>().HasOne<User>(u => u.User).WithOne(u => u.Character).HasForeignKey<Character>(c => c.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
-                
         }
     }
 }
