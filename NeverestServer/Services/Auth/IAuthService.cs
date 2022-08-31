@@ -1,7 +1,7 @@
 ﻿using NeverestServer.Data.Dtos.User;
 using NeverestServer.Models;
 
-namespace NeverestServer.Services.Auth
+namespace NeverestServer.Services
 {
     public interface IAuthService
     {

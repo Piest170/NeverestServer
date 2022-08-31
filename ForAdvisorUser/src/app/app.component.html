@@ -1,0 +1,47 @@
+<h1 id="tableLabel">CharacterSkill List</h1>
+
+<p *ngIf="!characterskills"><em>Loading... Please refresh once the ASP.NET backend has started.</em></p>
+
+<div class="container">
+  <div class="form-group">
+    <form class="form-control">
+      <h3>Search Character or Skill</h3>
+      <div>
+        <label for="Input">Input: </label>
+        <input fromControlName="stringtext" name="stringtext" #searchBox id="stringtext" [(ngModel)]="stringtext" />
+      </div>
+      <div>
+        <label for="status">Status: </label>
+        <input fromControlName="status" id="Learning" name="status" type="radio" [(ngModel)]="status" value="Learning" /><label for="Learning">Learning</label>
+        <input fromControlName="status" id="Completed" name="status" type="radio" [(ngModel)]="status" value="Completed" /><label for="Completed">Completed</label>
+      </div>
+      <button type="submit" (click)="OnSearch(stringtext,status)">Search</button>
+      <button type="button" (click)="getAllCharacterSkill()">View All</button>
+    </form>
+  </div>
+
+  <table class="table table-striped" *ngIf="characterskills">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Skill</th>
+        <th>Level</th>
+        <th>Status</th>
+        <th>AdvisorControl</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let characterskill of characterskills | async">
+        <td>{{ characterskill.id }}</td>
+        <td>{{ characterskill.characterName }}</td>
+        <td>{{ characterskill.skillName }}</td>
+        <td>{{ characterskill.learningLevel }}</td>
+        <td>{{ characterskill.learningStatus }}</td>
+        <td>
+          <button type="button" (click)="OnApproved(characterskill.id)">Approve</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

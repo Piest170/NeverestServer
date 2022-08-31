@@ -1,4 +1,4 @@
-﻿namespace NeverestServer.Services.AdvisorService
+﻿namespace NeverestServer.Services
 {
     public interface IAdvisorService
     {

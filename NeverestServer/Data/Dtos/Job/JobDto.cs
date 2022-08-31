@@ -7,6 +7,5 @@ namespace NeverestServer.Data.Dtos.Job
         public int JobId { get; set; }
         public string JobName { get; set; } = null!;
         public int PrevJobId { get; set; }
-        public List<SkillDto> Skills { get; set; }
     }
 }

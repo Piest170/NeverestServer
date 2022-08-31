@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using NeverestServer.Data.Dtos.Character;
 using NeverestServer.Models;
-using NeverestServer.Services.CharacterService;
+using NeverestServer.Services;
 
 namespace NeverestServer.Controllers
 {
@@ -36,7 +37,7 @@ namespace NeverestServer.Controllers
             return Ok(await _characterService.GetCharacter(id));
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
         {
             var response = await _characterService.UpdateCharacter(updatedCharacter);
@@ -47,10 +48,28 @@ namespace NeverestServer.Controllers
             return Ok(response);
         }
 
+        [HttpGet("Skill")]
+        public async Task<ActionResult<ServiceResponse<List<GetCharacterSkillDto>>>> GetAllCharacterSkills()
+        {
+            return Ok(await _characterService.GetAllCharacterSkills());
+        }
+
         [HttpPost("Skill")]
         public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> AddCharacterSkill(List<AddCharacterSkillDto> newCharacterSkill)
         {
             return Ok(await _characterService.AddCharacterSkill(newCharacterSkill));
+        }
+
+        [HttpPost("Skill/Search")]
+        public async Task<ActionResult<ServiceResponse<List<GetCharacterSkillDto>>>> GetCharacterSkill(string searchstring, string status)
+        {
+            return Ok(await _characterService.GetCharacterSkill(searchstring, status));
+        }
+
+        [HttpPut("Skill/{id}")]
+        public async Task<ActionResult<ServiceResponse<UpdateCharacterSkillDto>>> UpdateCharacterSkill(int id)
+        {
+            return Ok(await _characterService.UpdateCharacterSkill(id));
         }
 
         [HttpPost("Quest")]

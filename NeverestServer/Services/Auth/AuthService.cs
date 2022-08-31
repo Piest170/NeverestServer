@@ -6,7 +6,7 @@ using NeverestServer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace NeverestServer.Services.Auth
+namespace NeverestServer.Services
 {
     public class AuthService : IAuthService
     {

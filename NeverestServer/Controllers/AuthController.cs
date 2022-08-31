@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NeverestServer.Data.Dtos.User;
 using NeverestServer.Models;
-using NeverestServer.Services.Auth;
+using NeverestServer.Services;
 
 namespace NeverestServer.Controllers
 {
