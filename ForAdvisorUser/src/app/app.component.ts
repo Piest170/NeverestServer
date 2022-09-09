@@ -26,6 +26,13 @@ export class AppComponent implements OnInit {
     this.getAllCharacterSkill();
   }
 
+  OnCheck(status: string) {
+    if (status === "Completed") {
+      return null
+    }
+    return status
+  }
+
   getCheck() {
     return this.form.controls;
   }

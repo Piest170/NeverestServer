@@ -26,7 +26,10 @@ export class CharacterskillService {
   }
 
   getCharacterSkill(stringtext: string, status: string): Observable<CharacterSkill[]> {
-    return this.http.post<CharacterSkill[]>(this.URL + `/Search?searchstring=${stringtext}&status=${status}`, { stringtext, status })
+    if (status === "All") {
+      return this.getAllCharacterSkill()
+    }
+    return this.http.post<CharacterSkill[]>(this.URL + `/Search`, { searchText : stringtext, status : status })
       .pipe(
         map((data: any) => {
           console.log('data: ', data);

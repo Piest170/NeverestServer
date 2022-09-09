@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
+using NeverestServer.Data.Dtos.Advisor;
 using NeverestServer.Data.Dtos.Character;
 using NeverestServer.Models;
 using NeverestServer.Services;
@@ -61,9 +62,9 @@ namespace NeverestServer.Controllers
         }
 
         [HttpPost("Skill/Search")]
-        public async Task<ActionResult<ServiceResponse<List<GetCharacterSkillDto>>>> GetCharacterSkill(string searchstring, string status)
+        public async Task<ActionResult<ServiceResponse<List<GetCharacterSkillDto>>>> GetCharacterSkill(SearchCharacterSkillForAdvisorDto searchDto)
         {
-            return Ok(await _characterService.GetCharacterSkill(searchstring, status));
+            return Ok(await _characterService.GetCharacterSkill(searchDto));
         }
 
         [HttpPut("Skill/{id}")]

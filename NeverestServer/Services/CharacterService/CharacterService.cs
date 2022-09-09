@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NeverestServer.Data.Dtos.Advisor;
 using NeverestServer.Data.Dtos.Character;
 using NeverestServer.Data.Dtos.Skill;
 using NeverestServer.Models;
@@ -121,25 +122,25 @@ namespace NeverestServer.Services
             return response;
         }
 
-        public async Task<ServiceResponse<List<GetCharacterSkillDto>>> GetCharacterSkill(string searchstring, string status)
+        public async Task<ServiceResponse<List<GetCharacterSkillDto>>> GetCharacterSkill(SearchCharacterSkillForAdvisorDto searchCriteria)
         {
             var response = new ServiceResponse<List<GetCharacterSkillDto>>();
             try
             {
                 var result = from c in _context.CharacterSkills select c;
-                if (string.IsNullOrEmpty(searchstring) && string.IsNullOrEmpty(status))
+                if (string.IsNullOrEmpty(searchCriteria.SearchText) && string.IsNullOrEmpty(searchCriteria.Status))
                 {
                     response.Success = false;
                     response.Message = "CharacterSkill Search NotFound";
                     return response;
                 }
-                if(status != "Learning" && status != "Completed")
+                if (searchCriteria.Status != "Learning" && searchCriteria.Status != "Completed")
                 {
                     response.Success = false;
                     response.Message = "CharacterSkill Search NotFound";
                     return response;
                 }
-                result = result.Where(c => (c.Character.User.Username.Contains(searchstring) || c.Skill.SkillName.Contains(searchstring)) && c.LearningStatus.Contains(status));
+                result = result.Where(c => (c.Character.User.Username.Contains(searchCriteria.SearchText) || c.Skill.SkillName.Contains(searchCriteria.SearchText)) && c.LearningStatus.Contains(searchCriteria.Status));
                 response.Data = await result.Include(r => r.Character).ThenInclude(r => r.User).Include(r => r.Skill).Select(r => new GetCharacterSkillDto()
                 {
                     Id = r.Id,

@@ -14,9 +14,9 @@
         <label for="status">Status: </label>
         <input fromControlName="status" id="Learning" name="status" type="radio" [(ngModel)]="status" value="Learning" /><label for="Learning">Learning</label>
         <input fromControlName="status" id="Completed" name="status" type="radio" [(ngModel)]="status" value="Completed" /><label for="Completed">Completed</label>
+        <input fromControlName="status" id="All" name="status" type="radio" [(ngModel)]="status" value="All" /><label for="All">All</label>
       </div>
       <button type="submit" (click)="OnSearch(stringtext,status)">Search</button>
-      <button type="button" (click)="getAllCharacterSkill()">View All</button>
     </form>
   </div>
 
@@ -39,7 +39,7 @@
         <td>{{ characterskill.learningLevel }}</td>
         <td>{{ characterskill.learningStatus }}</td>
         <td>
-          <button type="button" (click)="OnApproved(characterskill.id)">Approve</button>
+          <button *ngIf="OnCheck(characterskill.learningStatus)" type="button" (click)="OnApproved(characterskill.id)" >Approve</button>
         </td>
       </tr>
     </tbody>
