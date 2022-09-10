@@ -12,14 +12,14 @@ using NeverestServer.Data;
 namespace NeverestServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220808042656_TestData2")]
-    partial class TestData2
+    [Migration("20220910111740_TestData")]
+    partial class TestData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.7")
+                .HasAnnotation("ProductVersion", "6.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
