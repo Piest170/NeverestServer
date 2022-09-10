@@ -253,8 +253,7 @@ namespace NeverestServer.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Characters_JobId",
                 table: "Characters",
-                column: "JobId",
-                unique: true);
+                column: "JobId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Characters_UserId",
