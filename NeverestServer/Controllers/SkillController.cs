@@ -9,15 +9,12 @@ namespace NeverestServer.Controllers
     public class SkillController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SkillController(DataContext context, IHttpContextAccessor httpContextAccessor)
+        public SkillController(DataContext context)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        // GET: api/<SkillController>
         [HttpGet]
         public async Task<IActionResult> GetAllSkill()
         {
@@ -25,7 +22,6 @@ namespace NeverestServer.Controllers
             return Ok(skill);
         }
 
-        // GET api/<SkillController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSkill(int id)
         {

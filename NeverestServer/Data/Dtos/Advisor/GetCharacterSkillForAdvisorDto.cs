@@ -1,8 +1,6 @@
-﻿using NeverestServer.Data.Dtos.Skill;
-
-namespace NeverestServer.Data.Dtos.Character
+﻿namespace NeverestServer.Data.Dtos.Advisor
 {
-    public class GetCharacterSkillDto
+    public class GetCharacterSkillForAdvisorDto
     {
         public int Id { get; set; }
         public string? CharacterName { get; set; }

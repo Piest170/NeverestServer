@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 using NeverestServer.Data.Dtos.User;
 using NeverestServer.Models;
@@ -55,7 +56,7 @@ namespace NeverestServer.Services
             if (await UserExists(user.Email, user.Username))
             {
                 response.Success = false;
-                response.Message = "User already exists.";
+                response.Message = "Email or User already exists.";
                 return response;
             }
 
@@ -63,7 +64,6 @@ namespace NeverestServer.Services
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.Token = CreateToken(user);
-            
 
             _context.Users.Add(user);
 

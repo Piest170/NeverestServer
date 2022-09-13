@@ -33,7 +33,7 @@ namespace NeverestServer.Services
                 {
                     CharacterId = c.CharacterId,
                     CharacterName = c.User.Username,
-                    JobId = c.Job.JobId,
+                    JobName = c.Job.JobName,
                     Skills = c.CharacterSkills.Select(
                         cs => new SkillDto()
                         {
@@ -41,11 +41,11 @@ namespace NeverestServer.Services
                             SkillName = cs.Skill.SkillName,
                             SkillGroup = cs.Skill.SkillGroup,
                             SkillLevel = cs.LearningLevel,
-                            MaxSkillLevel = cs.Skill.MaxSkillLevel
+                            MaxSkillLevel = cs.Skill.MaxSkillLevel,
+                            SkillStatus = cs.LearningStatus
                         }).ToList()
-                })
-                .ToListAsync();
-            if (db == null)
+                }).ToListAsync();
+            if (response.Data == null)
             {
                 response.Success = false;
                 response.Message = "No Any Character";
@@ -70,7 +70,7 @@ namespace NeverestServer.Services
                 {
                     CharacterId = c.CharacterId,
                     CharacterName = c.User.Username,
-                    JobId = c.Job.JobId,
+                    JobName = c.Job.JobName,
                     Skills = c.CharacterSkills.Select(
                         cs => new SkillDto()
                         {
@@ -78,10 +78,11 @@ namespace NeverestServer.Services
                             SkillName = cs.Skill.SkillName,
                             SkillGroup = cs.Skill.SkillGroup,
                             SkillLevel = cs.LearningLevel,
-                            MaxSkillLevel = cs.Skill.MaxSkillLevel
+                            MaxSkillLevel = cs.Skill.MaxSkillLevel,
+                            SkillStatus = cs.LearningStatus
                         }).ToList()
                 }).FirstOrDefaultAsync(c => c.CharacterId == id);
-            if (db == null)
+            if (response.Data == null)
             {
                 response.Success = false;
                 response.Message = "Not Found Character";
@@ -95,12 +96,12 @@ namespace NeverestServer.Services
             return response;
         }
 
-        public async Task<ServiceResponse<List<GetCharacterSkillDto>>> GetAllCharacterSkills()
+        public async Task<ServiceResponse<List<GetCharacterSkillForAdvisorDto>>> GetAllCharacterSkills()
         {
-            var response = new ServiceResponse<List<GetCharacterSkillDto>>();
+            var response = new ServiceResponse<List<GetCharacterSkillForAdvisorDto>>();
             var db = await _context.CharacterSkills
                 .Include(cs => cs.Character).ThenInclude(cs => cs.User)
-                .Select(c => new GetCharacterSkillDto()
+                .Select(c => new GetCharacterSkillForAdvisorDto()
                 {
                     Id = c.Id,
                     CharacterName = c.Character.User.Username,
@@ -108,7 +109,7 @@ namespace NeverestServer.Services
                     LearningLevel = c.LearningLevel,
                     LearningStatus = c.LearningStatus
                 }).ToListAsync();
-            if (db == null)
+            if (response.Data == null)
             {
                 response.Success = false;
                 response.Message = "No CharacterSkill Data";
@@ -122,9 +123,9 @@ namespace NeverestServer.Services
             return response;
         }
 
-        public async Task<ServiceResponse<List<GetCharacterSkillDto>>> GetCharacterSkill(SearchCharacterSkillForAdvisorDto searchCriteria)
+        public async Task<ServiceResponse<List<GetCharacterSkillForAdvisorDto>>> GetCharacterSearchSkill(SearchCharacterSkillForAdvisorDto searchCriteria)
         {
-            var response = new ServiceResponse<List<GetCharacterSkillDto>>();
+            var response = new ServiceResponse<List<GetCharacterSkillForAdvisorDto>>();
             try
             {
                 var result = from c in _context.CharacterSkills select c;
@@ -141,7 +142,7 @@ namespace NeverestServer.Services
                     return response;
                 }
                 result = result.Where(c => (c.Character.User.Username.Contains(searchCriteria.SearchText) || c.Skill.SkillName.Contains(searchCriteria.SearchText)) && c.LearningStatus.Contains(searchCriteria.Status));
-                response.Data = await result.Include(r => r.Character).ThenInclude(r => r.User).Include(r => r.Skill).Select(r => new GetCharacterSkillDto()
+                response.Data = await result.Include(r => r.Character).ThenInclude(r => r.User).Include(r => r.Skill).Select(r => new GetCharacterSkillForAdvisorDto()
                 {
                     Id = r.Id,
                     CharacterName = r.Character.User.Username,
@@ -157,6 +158,33 @@ namespace NeverestServer.Services
             {
                 response.Success = false;
                 response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse<GetCharacterSkillForAdvisorDto>> GetCharacterSkill(int id)
+        {
+            var response = new ServiceResponse<GetCharacterSkillForAdvisorDto>();
+            var db = await _context.CharacterSkills
+                .Include(cs => cs.Character).ThenInclude(cs => cs.User)
+                .Select(c => new GetCharacterSkillForAdvisorDto()
+                {
+                    Id = c.Id,
+                    CharacterName = c.Character.User.Username,
+                    SkillName = c.Skill.SkillName,
+                    LearningLevel = c.LearningLevel,
+                    LearningStatus = c.LearningStatus
+                }).FirstOrDefaultAsync(c => c.Id == id);
+            if (response.Data == null)
+            {
+                response.Success = false;
+                response.Message = "No CharacterSkill Data";
+            }
+            else
+            {
+                response.Data = db;
+                response.Success = true;
+                response.Message = "Have CharacterSkill";
             }
             return response;
         }

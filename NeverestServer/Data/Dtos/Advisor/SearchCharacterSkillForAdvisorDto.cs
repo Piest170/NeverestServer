@@ -2,7 +2,7 @@
 {
     public class SearchCharacterSkillForAdvisorDto
     {
-        public string SearchText { get; set; }
-        public string Status { get; set; }
+        public string? SearchText { get; set; }
+        public string? Status { get; set; }
     }
 }

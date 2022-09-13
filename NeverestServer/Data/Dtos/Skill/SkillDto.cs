@@ -7,5 +7,6 @@
         public string? SkillGroup { get; set; }
         public int SkillLevel { get; set; }
         public int MaxSkillLevel { get; set; }
+        public string? SkillStatus { get; set; }
     }
 }

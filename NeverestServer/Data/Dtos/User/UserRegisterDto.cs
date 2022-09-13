@@ -4,9 +4,9 @@ namespace NeverestServer.Data.Dtos.User
 {
     public class UserRegisterDto
     {
-        [Required, EmailAddress]
+        [Required(ErrorMessage = "Email Required"), EmailAddress(ErrorMessage = "Your Email cannot use")]
         public string Email { get; set; } = string.Empty;
-        [Required]
+        [Required(ErrorMessage = "Username Required"), StringLength(25)]
         public string Username { get; set; } = string.Empty;
         [Required, MinLength(6)]
         public string Password { get; set; } = string.Empty;
