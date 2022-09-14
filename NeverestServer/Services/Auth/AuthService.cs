@@ -101,7 +101,7 @@ namespace NeverestServer.Services
             if (user == null)
             {
                 response.Success = false;
-                response.Message = "User not Found";
+                response.Message = "Email not Found";
             }
 
             user.ResetPasswordToken = CreateToken(user);

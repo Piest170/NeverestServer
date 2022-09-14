@@ -10,9 +10,9 @@ namespace NeverestServer.Services
         Task<ServiceResponse<GetCharacterDto>> GetCharacter(int id);
         Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter);
         Task<ServiceResponse<List<GetCharacterSkillForAdvisorDto>>> GetAllCharacterSkills();
-        Task<ServiceResponse<GetCharacterSkillForAdvisorDto>> GetCharacterSkill(int id);
+        Task<ServiceResponse<GetCharacterSkillDto>> GetCharacterSkill(int characterid, int skillid, int level);
         Task<ServiceResponse<List<GetCharacterSkillForAdvisorDto>>> GetCharacterSearchSkill(SearchCharacterSkillForAdvisorDto searchCharacterSkillForAdvisorDto);
-        Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(List<AddCharacterSkillDto> newCharacterSkill);
+        Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(List<GetCharacterSkillDto> newCharacterSkill);
         Task<ServiceResponse<UpdateCharacterSkillDto>> UpdateCharacterSkill(int id);
         Task<ServiceResponse<GetCharacterDto>> AddCharacterQuest(AddCharacterQuestDto newCharacterQuest);
     }

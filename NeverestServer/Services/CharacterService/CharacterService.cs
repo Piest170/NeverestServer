@@ -45,7 +45,7 @@ namespace NeverestServer.Services
                             SkillStatus = cs.LearningStatus
                         }).ToList()
                 }).ToListAsync();
-            if (response.Data == null)
+            if (db == null)
             {
                 response.Success = false;
                 response.Message = "No Any Character";
@@ -82,7 +82,7 @@ namespace NeverestServer.Services
                             SkillStatus = cs.LearningStatus
                         }).ToList()
                 }).FirstOrDefaultAsync(c => c.CharacterId == id);
-            if (response.Data == null)
+            if (db == null)
             {
                 response.Success = false;
                 response.Message = "Not Found Character";
@@ -109,7 +109,7 @@ namespace NeverestServer.Services
                     LearningLevel = c.LearningLevel,
                     LearningStatus = c.LearningStatus
                 }).ToListAsync();
-            if (response.Data == null)
+            if (db == null)
             {
                 response.Success = false;
                 response.Message = "No CharacterSkill Data";
@@ -162,34 +162,30 @@ namespace NeverestServer.Services
             return response;
         }
 
-        public async Task<ServiceResponse<GetCharacterSkillForAdvisorDto>> GetCharacterSkill(int id)
+        public async Task<ServiceResponse<GetCharacterSkillDto>> GetCharacterSkill(int characterid, int skillid, int level)
         {
-            var response = new ServiceResponse<GetCharacterSkillForAdvisorDto>();
-            var db = await _context.CharacterSkills
-                .Include(cs => cs.Character).ThenInclude(cs => cs.User)
-                .Select(c => new GetCharacterSkillForAdvisorDto()
-                {
-                    Id = c.Id,
-                    CharacterName = c.Character.User.Username,
-                    SkillName = c.Skill.SkillName,
-                    LearningLevel = c.LearningLevel,
-                    LearningStatus = c.LearningStatus
-                }).FirstOrDefaultAsync(c => c.Id == id);
-            if (response.Data == null)
+            var response = new ServiceResponse<GetCharacterSkillDto>();
+            var db = await _context.CharacterSkills.Where(c => (c.CharacterId == characterid && c.SkillId == skillid && c.LearningLevel == level)).FirstOrDefaultAsync();
+            if (db == null)
             {
                 response.Success = false;
                 response.Message = "No CharacterSkill Data";
             }
             else
             {
-                response.Data = db;
+                response.Data = await _context.CharacterSkills.Select(c => new GetCharacterSkillDto()
+                {
+                    CharacterId = db.SkillId,
+                    SkillId = db.SkillId,
+                    LearningLevel = db.LearningLevel,
+                }).FirstOrDefaultAsync();
                 response.Success = true;
                 response.Message = "Have CharacterSkill";
             }
             return response;
         }
 
-        public async Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(List<AddCharacterSkillDto> newCharacterSkills)
+        public async Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(List<GetCharacterSkillDto> newCharacterSkills)
         {
             var response = new ServiceResponse<GetCharacterDto>();
             try

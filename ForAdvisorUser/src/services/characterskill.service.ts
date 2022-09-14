@@ -13,7 +13,7 @@ export class CharacterskillService {
   constructor(private http: HttpClient) { }
 
   getAllCharacterSkill(): Observable<CharacterSkill[]> {
-    return this.http.get<CharacterSkill[]>(this.URL)
+    return this.http.get<CharacterSkill[]>(this.URL + "/All")
       .pipe(
         map((data: any) => {
           console.log('data: ', data);

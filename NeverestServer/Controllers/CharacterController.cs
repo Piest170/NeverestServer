@@ -49,20 +49,20 @@ namespace NeverestServer.Controllers
             return Ok(response);
         }
 
-        [HttpGet("Skill")]
+        [HttpGet("Skill/All")]
         public async Task<ActionResult<ServiceResponse<List<GetCharacterSkillForAdvisorDto>>>> GetAllCharacterSkills()
         {
             return Ok(await _characterService.GetAllCharacterSkills());
         }
 
-        [HttpGet("Skill/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<GetCharacterSkillForAdvisorDto>>>> GetCharacterSkill(int id)
+        [HttpGet("Skill")]
+        public async Task<ActionResult<ServiceResponse<GetCharacterSkillDto>>> GetCharacterSkill(int characterid, int skillid, int level)
         {
-            return Ok(await _characterService.GetCharacterSkill(id));
+            return Ok(await _characterService.GetCharacterSkill(characterid, skillid, level));
         }
 
         [HttpPost("Skill")]
-        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> AddCharacterSkill(List<AddCharacterSkillDto> newCharacterSkill)
+        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> AddCharacterSkill(List<GetCharacterSkillDto> newCharacterSkill)
         {
             return Ok(await _characterService.AddCharacterSkill(newCharacterSkill));
         }
