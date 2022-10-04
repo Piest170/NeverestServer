@@ -10,6 +10,7 @@ namespace NeverestServer.Data.Dtos.Character
         public int CharacterId { get; set; }
         public string? CharacterName { get; set; }
         public string? JobName { get; set; }
+        public string CompletedSkill { get; set; }
         public List<SkillDto> Skills { get; set; }
         public List<QuestDto> Quests { get; set; }
     }

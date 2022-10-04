@@ -71,6 +71,7 @@ namespace NeverestServer.Services
                     CharacterId = c.CharacterId,
                     CharacterName = c.User.Username,
                     JobName = c.Job.JobName,
+                    CompletedSkill = string.Join(',', c.CharacterSkills.Where(s => s.LearningStatus == "Completed").Select(s => $"{s.Skill.SkillName} (Level {s.LearningLevel})").ToArray()),
                     Skills = c.CharacterSkills.Select(
                         cs => new SkillDto()
                         {
@@ -208,6 +209,14 @@ namespace NeverestServer.Services
                         response.Message = "Skill Not Found.";
                         return response;
                     }
+
+                    var duplicated = await GetCharacterSkill(newCharacterSkill.CharacterId, newCharacterSkill.SkillId, newCharacterSkill.LearningLevel);
+                    if (duplicated.Success)
+                    {
+                        response.Success = false;
+                        response.Message = "Duplicated";
+                        return response;
+                    }
                     var characterSkill = new CharacterSkill()
                     {
                         CharacterId = newCharacterSkill.CharacterId,
@@ -283,42 +292,37 @@ namespace NeverestServer.Services
 
         public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updateCharacter)
         {
-            ServiceResponse<GetCharacterDto> response = new ServiceResponse<GetCharacterDto>();
+            var response = new ServiceResponse<GetCharacterDto>();
             try
             {
-                var character = await _context.Characters
-                .Include(c => c.User)
-                .Include(c => c.Job)
-                .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
-                .FirstOrDefaultAsync(c => c.CharacterId == updateCharacter.CharacterId);
-                if (character.CharacterId == updateCharacter.CharacterId)
+                if (updateCharacter.CharacterName.Length >= 25)
                 {
-                    var characterskill = await _context.CharacterSkills.FirstOrDefaultAsync(c => c.CharacterId == updateCharacter.CharacterId);
-                    characterskill.LearningStatus = updateCharacter.LearningStatus;
-                    if (character.Job.JobId == 1)
-                    {
-                        foreach (CharacterSkill skill in character.CharacterSkills)
-                        {
-                            if (characterskill == null)
-                            {
-                                response.Success = false;
-                                response.Message = "No Skill in this Character";
-                                return response;
-                            }
-                            else if (character.CharacterSkills.Count >= 3 && characterskill.LearningStatus == "Completed")
-                            {
-                                updateCharacter.JobId = character.Job.JobId + 1;
-                            }
-                        }
-                    }
-                    await _context.SaveChangesAsync();
-                    response.Success = true;
-                    response.Message = "Update Completed";
+                    response.Success = false;
+                    response.Message = "Your Name is Too Long.";
+                    return response;
+                }
+
+                var db1 = await _context.Characters.Include(c => c.User).Where(c => c.User.Username == updateCharacter.CharacterName).ToListAsync();
+                if (db1.Count > 0)
+                {
+                    response.Success = false;
+                    response.Message = "This Name has been Used.";
+
+                    return response;
+                }
+                var character = await _context.Characters.Include(c => c.User).Where(c => c.CharacterId == updateCharacter.Id).FirstOrDefaultAsync();
+                if (character == null)
+                {
+                    response.Success = false;
+                    response.Message = "Not Found Character";
                 }
                 else
                 {
-                    response.Success = false;
-                    response.Message = "Character not found.";
+                    character.User.Username = updateCharacter.CharacterName;
+                    response.Success = true;
+                    response.Message = "Your Name have been Changed.";
+                    await _context.SaveChangesAsync();
+
                 }
             }
             catch (Exception ex)
